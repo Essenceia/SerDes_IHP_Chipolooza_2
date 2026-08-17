@@ -47,11 +47,13 @@ PRIMARY_GDSII_STREAMOUT_TOOL: klayout
 
 # Specify the pad instances for the padring
 PAD_SOUTH: [
-    "analogs\\[0\\].bidir_pad",
     tx_p_pad,   
     tx_n_pad, 
-    "analogs\\[1\\].analog_pad",
-    "analogs\\[2\\].analog_pad",
+    "analogs\\[0\\].bidir_pad",
+
+    avdd_pad,
+    avss_pad,
+ 
     rst_n_pad,
     clk_p_pad,
     clk_n_pad 
@@ -75,8 +77,8 @@ PAD_NORTH: [
     "outputs\\[1\\].output_pad",
     "outputs\\[0\\].output_pad",
     
-    "iovdd_pads\\[0\\].iovdd_pad",
-    "iovss_pads\\[0\\].iovss_pad",
+    "ioavdd_pads\\[0\\].iovdd_pad",
+    "ioavss_pads\\[0\\].iovss_pad",
 
     rx_p_pad,
     rx_n_pad

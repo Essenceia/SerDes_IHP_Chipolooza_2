@@ -21,8 +21,10 @@ module chip_top #(
     `ifdef USE_POWER_PINS
     inout wire IOVDD,
     inout wire IOVSS,
-    inout wire VDD,
-    inout wire VSS,
+    inout wire DVDD,
+    inout wire DVSS,
+    inout wire AVDD,
+    inout wire AVSS,
     `endif
     inout  wire clk_PAD,
     inout  wire rst_n_PAD,
@@ -90,8 +92,6 @@ module chip_top #(
     endgenerate
 
     // Signal IO pad instances
-
-    // Schmitt trigger
     sg13cmos5l_IOPadIn clk_pad (
         `ifdef USE_POWER_PINS
         .iovdd  (IOVDD),
