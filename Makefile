@@ -28,19 +28,19 @@ clone-pdk: $(PDK_ROOT)/$(PDK) ## Clone the IHP-Open-PDK repository
 all: librelane ## Build the project (runs LibreLane)
 .PHONY: all
 
-librelane: $(PDK_ROOT)/$(PDK) ## Run LibreLane flow (synthesis, PnR, verification)
+librelane: clone-pdk ## Run LibreLane flow (synthesis, PnR, verification)
 	librelane ${LIBRELANE_CONFIGS} ${LIBRELANE_OPTS}
 .PHONY: librelane
 
-librelane-nodrc: $(PDK_ROOT)/$(PDK) ## Run LibreLane flow without DRC checks
+librelane-nodrc: clone-pdk ## Run LibreLane flow without DRC checks
 	librelane ${LIBRELANE_CONFIGS} ${LIBRELANE_OPTS} --skip KLayout.DRC --skip Magic.DRC
 .PHONY: librelane-nodrc
 
-librelane-openroad: $(PDK_ROOT)/$(PDK) ## Open the last run in OpenROAD
+librelane-openroad: clone-pdk ## Open the last run in OpenROAD
 	librelane ${LIBRELANE_CONFIGS} ${LIBRELANE_OPTS} --last-run --flow OpenInOpenROAD
 .PHONY: librelane-openroad
 
-librelane-klayout: $(PDK_ROOT)/$(PDK) ## Open the last run in KLayout
+librelane-klayout: clone-pdk ## Open the last run in KLayout
 	librelane ${LIBRELANE_CONFIGS} ${LIBRELANE_OPTS} --last-run --flow OpenInKLayout
 .PHONY: librelane-klayout
 
@@ -52,7 +52,7 @@ sim: ## Run RTL simulation with cocotb
 	cd cocotb; PDK_ROOT=${PDK_ROOT} PDK=${PDK} python3 chip_top_tb.py
 .PHONY: sim
 
-sim-gl: $(PDK_ROOT)/$(PDK) ## Run gate-level simulation with cocotb
+sim-gl: clone-pdk ## Run gate-level simulation with cocotb
 	cd cocotb; GL=1 PDK_ROOT=${PDK_ROOT} PDK=${PDK} python3 chip_top_tb.py
 .PHONY: sim-gl
 
