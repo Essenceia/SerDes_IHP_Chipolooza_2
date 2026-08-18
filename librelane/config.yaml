@@ -34,6 +34,7 @@ meta:
 DESIGN_NAME: chip_top
 VERILOG_FILES:
 - dir::../src/chip_top.sv
+- dir::../src/analog_dummy.v
 - dir::../src/chip_core.sv
 
 VERILOG_DEFINES: [FUNCTIONAL]

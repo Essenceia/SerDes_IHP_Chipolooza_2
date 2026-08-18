@@ -13,18 +13,18 @@ module chip_top #(
     `ifdef USE_POWER_PINS
     inout wire IOAVDD, IODVDD,
     inout wire IOAVSS, IODVSS,
-    inout wire AVDD, DVVV
-    inout wire AVSS, DVSS
+    inout wire AVDD, DVDD,
+    inout wire AVSS, DVSS,
     `endif
     inout  wire clk_p_PAD,
     inout  wire clk_n_PAD,
 
     inout  wire rst_n_PAD,
 
-	inout  wire tx_p_PAD;
-	inout  wire tx_n_PAD;
-	inout  wire rx_p_PAD;
-	inout  wire rx_n_PAD;
+	inout  wire tx_p_PAD,
+	inout  wire tx_n_PAD,
+	inout  wire rx_p_PAD,
+	inout  wire rx_n_PAD,
 
     inout  wire [NUM_INPUT_PADS-1 :0] input_PAD,
     inout  wire [NUM_OUTPUT_PADS-1:0] output_PAD,
@@ -196,6 +196,9 @@ module chip_top #(
 	localparam NUM_DIFF_PAIRS_PADS = 6;
 	wire [NUM_DIFF_PAIRS_PADS-1:0] diff_pair_pad;  
 	wire [NUM_DIFF_PAIRS_PADS-1:0] diff_pair_padres;  
+	wire clk_p, clk_n; 
+	wire tx_p, tx_n;
+	wire rx_p, rx_n;
 	assign diff_pair_pad = { clk_p_PAD, clk_n_PAD, tx_p_PAD, tx_n_PAD, rx_p_PAD, rx_n_PAD}; 
 	assign {clk_p, clk_n, tx_p, tx_n, rx_p, rx_n} = diff_pair_padres; 
     generate
@@ -218,9 +221,12 @@ module chip_top #(
     (* keep *) chip_core #(
         .NUM_INPUT_PADS  (NUM_INPUT_PADS),
         .NUM_OUTPUT_PADS (NUM_OUTPUT_PADS),
-        .NUM_BIDIR_PADS  (NUM_BIDIR_PADS),
-        .NUM_ANALOG_PADS (NUM_ANALOG_PADS)
+        .NUM_BIDIR_PADS  (NUM_BIDIR_PADS)
     ) i_chip_core (
+	`ifdef USE_POWER_PINS
+		.VDD(DVDD),
+		.VSS(DVSS),
+	`endif
         .clk        (digital_clk),
         .rst_n      (rst_n_PAD2CORE),
         .input_in   (input_PAD2CORE),
@@ -234,13 +240,17 @@ module chip_top #(
 	(* keep *) analog_dummy #(
 		.NUM_ANALOG_PADS(NUM_ANALOG_PADS)
 	) m_analog (
+	`ifdef USE_POWER_PINS
+		.VDD(AVDD),
+		.VSS(AVSS),
+	`endif
 		.clk_p_io(clk_p),
 		.clk_n_io(clk_n),
 		
-		.tx_p_io(tx_p_padres),
-		.tx_n_io(tx_n_padres),
-		.rx_p_io(rx_p_padres),
-		.rx_n_io(rx_n_padres),
+		.tx_p_io(tx_p),
+		.tx_n_io(tx_n),
+		.rx_p_io(rx_p),
+		.rx_n_io(rx_n),
 
 		.analog_io(analog_PADRES),
 		.digital_clk_o(digital_clk)

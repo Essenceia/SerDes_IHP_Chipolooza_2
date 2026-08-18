@@ -5,8 +5,8 @@ module analog_dummy #(
 	parameter NUM_ANALOG_PADS = 8
 )(
 	`ifdef USE_POWER_PINS
-	inout wire AVDD, 
-	inout wire AVSS
+	inout wire VDD, 
+	inout wire VSS,
 	`endif
 	inout wire clk_p_io, 
 	inout wire clk_n_io,
