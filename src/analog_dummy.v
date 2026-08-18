@@ -21,6 +21,6 @@ module analog_dummy #(
 	output wire digital_clk_o
 );
 
-assign digital_clk_o = 1'bx; 
+assign digital_clk_o = clk_p_io; 
 
 endmodule

@@ -5,14 +5,14 @@
 
 module chip_top #(
     // Signal pads
-    parameter NUM_INPUT_PADS  = 10,
-    parameter NUM_OUTPUT_PADS = 8,
-    parameter NUM_BIDIR_PADS  = 8,
-    parameter NUM_ANALOG_PADS = 8
+    parameter NUM_INPUT_PADS  = 2,
+    parameter NUM_OUTPUT_PADS = 1,
+    parameter NUM_BIDIR_PADS  = 6,
+    parameter NUM_ANALOG_PADS = 10
     )(
     `ifdef USE_POWER_PINS
-    inout wire IOAVDD, IODVDD,
-    inout wire IOAVSS, IODVSS,
+    inout wire IOVDD,
+    inout wire IOVSS,
     inout wire AVDD, DVDD,
     inout wire AVSS, DVSS,
     `endif
@@ -32,7 +32,7 @@ module chip_top #(
     inout  wire [NUM_ANALOG_PADS-1:0] analog_PAD
 );
 
-    wire digital_clk;
+    (* keep *) wire digital_clk;
     wire rst_n_PAD2CORE;
     wire [NUM_INPUT_PADS-1 :0] input_PAD2CORE;
     wire [NUM_OUTPUT_PADS-1:0] output_CORE2PAD;
@@ -42,76 +42,60 @@ module chip_top #(
     wire [NUM_ANALOG_PADS-1:0] analog_PADRES;
 
     // Power/gnd
+    // IO ring power
+    (* keep *)
+    sg13cmos5l_IOPadIOVdd iovdd_pad(
+        `ifdef USE_POWER_PINS
+        .iovdd  (IOVDD),
+        .iovss  (IOVSS),
+        .vdd    (AVDD),
+        .vss    (AVSS)
+        `endif
+    );
+    (* keep *)
+    sg13cmos5l_IOPadIOVss iovss_pad(
+        `ifdef USE_POWER_PINS
+        .iovdd  (IOVDD),
+        .iovss  (IOVSS),
+        .vdd    (AVDD),
+        .vss    (AVSS)
+        `endif
+    );
     // Analog power domain
-    (* keep *)
-    sg13cmos5l_IOPadIOVdd ioavdd_pad  (
+	(* keep *)
+    sg13cmos5l_IOPadVdd avdd_pad(
         `ifdef USE_POWER_PINS
-        .iovdd  (IOAVDD),
-        .iovss  (IOAVSS),
+        .iovdd  (IOVDD),
+        .iovss  (IOVSS),
         .vdd    (AVDD),
         .vss    (AVSS)
         `endif
     );
     (* keep *)
-    sg13cmos5l_IOPadIOVss ioavss_pad  (
+    sg13cmos5l_IOPadVss avss_pad(
         `ifdef USE_POWER_PINS
-        .iovdd  (IOAVDD),
-        .iovss  (IOAVSS),
+        .iovdd  (IOVDD),
+        .iovss  (IOVSS),
         .vdd    (AVDD),
         .vss    (AVSS)
         `endif
     );
-    (* keep *)
-    sg13cmos5l_IOPadVdd avdd_pad  (
-        `ifdef USE_POWER_PINS
-        .iovdd  (IOAVDD),
-        .iovss  (IOAVSS),
-        .vdd    (AVDD),
-        .vss    (AVSS)
-        `endif
-    );
-    (* keep *)
-    sg13cmos5l_IOPadVss avss_pad  (
-        `ifdef USE_POWER_PINS
-        .iovdd  (IOAVDD),
-        .iovss  (IOAVSS),
-        .vdd    (AVDD),
-        .vss    (AVSS)
-        `endif
-    );
+
 	// Digital power domain
     (* keep *)
-    sg13cmos5l_IOPadIOVdd iodvdd_pad  (
+    sg13cmos5l_IOPadVdd dvdd_pad(
         `ifdef USE_POWER_PINS
-        .iovdd  (IODVDD),
-        .iovss  (IODVSS),
+        .iovdd  (IOVDD),
+        .iovss  (IOVSS),
         .vdd    (DVDD),
         .vss    (DVSS)
         `endif
     );
     (* keep *)
-    sg13cmos5l_IOPadIOVss iodvss_pad  (
+    sg13cmos5l_IOPadVss dvss_pad(
         `ifdef USE_POWER_PINS
-        .iovdd  (IODVDD),
-        .iovss  (IODVSS),
-        .vdd    (DVDD),
-        .vss    (DVSS)
-        `endif
-    );
-    (* keep *)
-    sg13cmos5l_IOPadVdd dvdd_pad  (
-        `ifdef USE_POWER_PINS
-        .iovdd  (IODVDD),
-        .iovss  (IODVSS),
-        .vdd    (DVDD),
-        .vss    (DVSS)
-        `endif
-    );
-    (* keep *)
-    sg13cmos5l_IOPadVss dvss_pad  (
-        `ifdef USE_POWER_PINS
-        .iovdd  (IODVDD),
-        .iovss  (IODVSS),
+        .iovdd  (IOVDD),
+        .iovss  (IOVSS),
         .vdd    (DVDD),
         .vss    (DVSS)
         `endif
@@ -120,10 +104,10 @@ module chip_top #(
 
     // Signal IO pad instances
     (* keep *)
-    sg13cmos5l_IOPadIn rst_n_pad (
+    sg13cmos5l_IOPadIn rst_n_pad(
         `ifdef USE_POWER_PINS
-        .iovdd  (IODVDD),
-        .iovss  (IODVSS),
+        .iovdd  (IOVDD),
+        .iovss  (IOVSS),
         .vdd    (DVDD),
         .vss    (DVSS),
         `endif
@@ -136,8 +120,8 @@ module chip_top #(
     	(* keep *)
         sg13cmos5l_IOPadIn input_pad (
             `ifdef USE_POWER_PINS
-            .iovdd  (IODVDD),
-            .iovss  (IODVSS),
+            .iovdd  (IOVDD),
+            .iovss  (IOVSS),
             .vdd    (DVDD),
             .vss    (DVSS),
             `endif
@@ -152,8 +136,8 @@ module chip_top #(
     	(* keep *)
         sg13cmos5l_IOPadOut30mA output_pad (
             `ifdef USE_POWER_PINS
-            .iovdd  (IODVDD),
-            .iovss  (IODVSS),
+            .iovdd  (IOVDD),
+            .iovss  (IOVSS),
             .vdd    (DVDD),
             .vss    (DVSS),
             `endif
@@ -168,8 +152,8 @@ module chip_top #(
     	(* keep *)
         sg13cmos5l_IOPadInOut30mA bidir_pad (
             `ifdef USE_POWER_PINS
-            .iovdd  (IODVDD),
-            .iovss  (IODVSS),
+            .iovdd  (IOVDD),
+            .iovss  (IOVSS),
             .vdd    (DVDD),
             .vss    (DVSS),
             `endif
@@ -186,8 +170,8 @@ module chip_top #(
         (* keep *)
         sg13cmos5l_IOPadAnalog analog_pad (
             `ifdef USE_POWER_PINS
-            .iovdd  (IOAVDD),
-            .iovss  (IOAVSS),
+            .iovdd  (IOVDD),
+            .iovss  (IOVSS),
             .vdd    (AVDD),
             .vss    (AVSS),
             `endif
@@ -197,29 +181,55 @@ module chip_top #(
     end
     endgenerate
 
-	localparam NUM_DIFF_PAIRS_PADS = 6;
-	wire [NUM_DIFF_PAIRS_PADS-1:0] diff_pair_pad;  
-	wire [NUM_DIFF_PAIRS_PADS-1:0] diff_pair_padres;  
-	wire clk_p, clk_n; 
+	// named analog pads
+	wire clk_p, clk_n;
 	wire tx_p, tx_n;
 	wire rx_p, rx_n;
-	assign diff_pair_pad = { clk_p_PAD, clk_n_PAD, tx_p_PAD, tx_n_PAD, rx_p_PAD, rx_n_PAD}; 
-	assign {clk_p, clk_n, tx_p, tx_n, rx_p, rx_n} = diff_pair_padres; 
-    generate
-    for (genvar i=0; i<NUM_DIFF_PAIRS_PADS; i++) begin : g_diff_analog_pads
-        (* keep *)
-        sg13cmos5l_IOPadAnalog analog_pad (
-            `ifdef USE_POWER_PINS
-            .iovdd  (IOAVDD),
-            .iovss  (IOAVSS),
-            .vdd    (AVDD),
-            .vss    (AVSS),
-            `endif
-            .padres (diff_pair_padres[i]),
-            .pad    (diff_pair_pad[i])
-        );
-    end
-    endgenerate
+    (* keep *) sg13cmos5l_IOPadAnalog tx_p_pad (
+        `ifdef USE_POWER_PINS
+        .iovdd(IOVDD), .iovss(IOVSS), .vdd(AVDD), .vss(AVSS),
+        `endif
+        .padres (tx_p),
+        .pad    (tx_p_PAD)
+    );
+
+    (* keep *) sg13cmos5l_IOPadAnalog tx_n_pad (
+        `ifdef USE_POWER_PINS
+        .iovdd(IOVDD), .iovss(IOVSS), .vdd(AVDD), .vss(AVSS),
+        `endif
+        .padres (tx_n),
+        .pad    (tx_n_PAD)
+    );
+    (* keep *) sg13cmos5l_IOPadAnalog rx_p_pad (
+        `ifdef USE_POWER_PINS
+        .iovdd(IOVDD), .iovss(IOVSS), .vdd(AVDD), .vss(AVSS),
+        `endif
+        .padres (rx_p),
+        .pad    (rx_p_PAD)
+    );
+
+    (* keep *) sg13cmos5l_IOPadAnalog rx_n_pad (
+        `ifdef USE_POWER_PINS
+        .iovdd(IOVDD), .iovss(IOVSS), .vdd(AVDD), .vss(AVSS),
+        `endif
+        .padres (rx_n),
+        .pad    (rx_n_PAD)
+    );   
+	(* keep *) sg13cmos5l_IOPadAnalog clk_p_pad (
+        `ifdef USE_POWER_PINS
+        .iovdd(IOVDD), .iovss(IOVSS), .vdd(AVDD), .vss(AVSS),
+        `endif
+        .padres (clk_p),
+        .pad    (clk_p_PAD)
+    );
+
+    (* keep *) sg13cmos5l_IOPadAnalog clk_n_pad (
+        `ifdef USE_POWER_PINS
+        .iovdd(IOVDD), .iovss(IOVSS), .vdd(AVDD), .vss(AVSS),
+        `endif
+        .padres (clk_n),
+        .pad    (clk_n_PAD)
+    );
 
     // Digital core design
     (* keep *) chip_core #(

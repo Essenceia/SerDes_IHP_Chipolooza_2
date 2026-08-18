@@ -48,9 +48,9 @@ PRIMARY_GDSII_STREAMOUT_TOOL: klayout
 
 # Specify the pad instances for the padring
 PAD_SOUTH: [
-    tx_p_pad,   
-    tx_n_pad, 
-    "analogs\\[0\\].bidir_pad",
+    "tx_p_pad",   
+    "tx_n_pad", 
+    "analogs\\[0\\].analog_pad",
 
     avdd_pad,
     avss_pad,
@@ -65,8 +65,8 @@ PAD_EAST: [
     "analogs\\[2\\].analog_pad",
     "analogs\\[3\\].analog_pad",
 
-    ioavdd_pad,
-    ioavss_pad,
+    iovdd_pad,
+    iovss_pad,
 
     "analogs\\[4\\].analog_pad",
     rx_p_pad, 
@@ -77,9 +77,9 @@ PAD_NORTH: [
     "analogs\\[5\\].analog_pad",
     "analogs\\[6\\].analog_pad",
     "analogs\\[7\\].analog_pad",
-    
-    iodvdd_pad,
-    iodvss_pad,
+
+    "analogs\\[8\\].analog_pad",
+    "analogs\\[9\\].analog_pad",
 
     "bidirs\\[0\\].bidir_pad", 
     "bidirs\\[1\\].bidir_pad", 
@@ -89,15 +89,17 @@ PAD_NORTH: [
 PAD_WEST: [
     "inputs\\[0\\].input_pad",
     "inputs\\[1\\].input_pad",
-    "bidirs\\[3\\].bidir_pad", 
+    "outputs\\[0\\].output_pad", 
 
     dvdd_pad,
     dvss_pad,
     
+    "bidirs\\[3\\].bidir_pad", 
     "bidirs\\[4\\].bidir_pad", 
-    "bidirs\\[5\\].bidir_pad", 
-    "bidirs\\[6\\].bidir_pad" 
+    "bidirs\\[5\\].bidir_pad" 
 ]
+
+PAD_CFG: dir::pad_cfg.tcl
 
 # SDC files
 PNR_SDC_FILE: dir::chip_top.sdc
@@ -105,8 +107,8 @@ SIGNOFF_SDC_FILE: dir::chip_top.sdc
 FALLBACK_SDC: dir::chip_top.sdc
 
 # Clock
-CLOCK_PORT: digital_clk
 CLOCK_NET: m_analog/digital_clk_o
+CLOCK_PORT: m_analog/digital_clk_o
 
 CLOCK_PERIOD: 20
 
