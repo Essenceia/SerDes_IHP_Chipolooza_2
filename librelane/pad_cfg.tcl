@@ -192,6 +192,8 @@ puts "\[INFO\] Connecting ring signals…"
 # Connect the ring signals
 connect_by_abutment
 
+puts "\[INFO\] Connecting by abutment finished…"
+
 # Place bondpads (if needed)
 if { [info exists ::env(PAD_BONDPAD_NAME)] } {
     puts "\[INFO\] Placing bondpads…"
