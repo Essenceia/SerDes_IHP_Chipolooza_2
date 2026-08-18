@@ -168,18 +168,23 @@ foreach side $sides {
         
         # Place the pads        
         place_pad -row [dict get $row_names $side] -location $cur_pos $inst_name -master $master_name
-        
+       
+		# debug log
+		puts "\[INFO\] place pad $inst_name on side $side belongs to master $master_name"
+
         # Increment current position
         set cur_pos [expr $cur_pos + $space_between_pads_min_filler + $width]
     }
 }
 
 puts "\[INFO\] Placing corner cells…"
+puts "\[INFO\] PAD_CORNER $::env(PAD_CORNER)"
 
 # Place corner cells
 place_corners $::env(PAD_CORNER)
 
 puts "\[INFO\] Placing filler cells…"
+puts "\[INFO\] PAD_FILLERS $::env(PAD_FILLERS)"
 
 # Place filler cells
 place_io_fill -row IO_NORTH {*}$::env(PAD_FILLERS)
@@ -190,7 +195,8 @@ place_io_fill -row IO_EAST {*}$::env(PAD_FILLERS)
 puts "\[INFO\] Connecting ring signals…"
 
 # Connect the ring signals
-connect_by_abutment
+puts "\[WARNING\] Not connecting ring signals! TODO look into this more we want partial ring islands"
+#connect_by_abutment
 
 puts "\[INFO\] Connecting by abutment finished…"
 
@@ -215,8 +221,8 @@ if { [info exists ::env(PAD_BONDPAD_NAME)] } {
                     place_bondpad -bond $::env(PAD_BONDPAD_NAME) $inst_name -offset [list $offset_x $offset_y]
                 }
             }
-        }
-    }
+		}
+	}
 }
 
 # Place io terminals (if needed)

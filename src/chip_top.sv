@@ -7,8 +7,8 @@ module chip_top #(
     // Signal pads
     parameter NUM_INPUT_PADS  = 2,
     parameter NUM_OUTPUT_PADS = 1,
-    parameter NUM_BIDIR_PADS  = 6,
-    parameter NUM_ANALOG_PADS = 10
+    parameter NUM_BIDIR_PADS  = 8,
+    parameter NUM_ANALOG_PADS = 6
     )(
     `ifdef USE_POWER_PINS
     inout wire IOAVDD, IODVDD,

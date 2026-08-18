@@ -54,8 +54,8 @@ PAD_SOUTH: [
 
     avdd_pad,
     avss_pad,
- 
-    rst_n_pad,
+    
+    "analogs\\[5\\].analog_pad",
     clk_p_pad,
     clk_n_pad 
 ]
@@ -74,9 +74,9 @@ PAD_EAST: [
 ]
 
 PAD_NORTH: [
-    "analogs\\[5\\].analog_pad",
-    "analogs\\[6\\].analog_pad",
-    "analogs\\[7\\].analog_pad",
+    "bidirs\\[6\\].bidir_pad", 
+    "bidirs\\[7\\].bidir_pad", 
+    rst_n_pad,
 
     iodvdd_pad,
     iodvss_pad,
