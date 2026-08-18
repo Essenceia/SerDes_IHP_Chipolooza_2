@@ -1,8 +1,15 @@
-# ihp-sg13cmos5l LibreLane Template
+# SerDes Chipolooza #2 challenge on IHP CMOS5L
 
-A LibreLane template to implement a full chip design using the ihp-sg13cmos5l PDK.
+2.5 mm^2 mixed signal chip. 
 
-![IHP template render in OpenROAD GUI](ihp_chip.png)
+![chip](/doc/padframe.png) 
+
+## Help 
+
+List all available build with 
+```
+make help
+```
 
 ## Prerequisites
 
@@ -19,7 +26,12 @@ Simply run `nix-shell` in the root of this repository.
 > [!NOTE]
 > Since we are working on a branch of LibreLane, OpenROAD needs to be compiled locally. This will be done automatically by Nix, and the binary will be cached locally. 
 
-With this shell enabled, run the implementation:
+With this shell enabled, run the implementation padframe only:
+```
+make librelane-padframe
+```
+
+Full chip with full drc:
 
 ```
 make librelane
