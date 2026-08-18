@@ -112,8 +112,8 @@ GND_NETS:
 - DVSS
 
 # Clock
-CLOCK_PORT: clk_PAD
-CLOCK_NET: clk_pad/p2c
+CLOCK_PORT: digital_clk
+CLOCK_NET: m_analog/digital_clk_o
 
 CLOCK_PERIOD: 20
 

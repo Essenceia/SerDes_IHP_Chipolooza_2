@@ -16,15 +16,23 @@ module chip_top #(
     inout wire AVDD, DVVV
     inout wire AVSS, DVSS
     `endif
-    inout  wire clk_PAD,
+    inout  wire clk_p_PAD,
+    inout  wire clk_n_PAD,
+
     inout  wire rst_n_PAD,
+
+	inout  wire tx_p_PAD;
+	inout  wire tx_n_PAD;
+	inout  wire rx_p_PAD;
+	inout  wire rx_n_PAD;
+
     inout  wire [NUM_INPUT_PADS-1 :0] input_PAD,
     inout  wire [NUM_OUTPUT_PADS-1:0] output_PAD,
     inout  wire [NUM_BIDIR_PADS-1 :0] bidir_PAD,
     inout  wire [NUM_ANALOG_PADS-1:0] analog_PAD
 );
 
-    wire clk_PAD2CORE;
+    wire digital_clk;
     wire rst_n_PAD2CORE;
     wire [NUM_INPUT_PADS-1 :0] input_PAD2CORE;
     wire [NUM_OUTPUT_PADS-1:0] output_CORE2PAD;
@@ -111,24 +119,12 @@ module chip_top #(
 
 
     // Signal IO pad instances
-    sg13cmos5l_IOPadIn clk_pad (
-        `ifdef USE_POWER_PINS
-        .iovdd  (IOVDD),
-        .iovss  (IOVSS),
-        .vdd    (VDD),
-        .vss    (VSS),
-        `endif
-        .p2c    (clk_PAD2CORE),
-        .pad    (clk_PAD)
-    );
-    
-    // Normal input
     sg13cmos5l_IOPadIn rst_n_pad (
         `ifdef USE_POWER_PINS
-        .iovdd  (IOVDD),
-        .iovss  (IOVSS),
-        .vdd    (VDD),
-        .vss    (VSS),
+        .iovdd  (IODVDD),
+        .iovss  (IODVSS),
+        .vdd    (DVDD),
+        .vss    (DVSS),
         `endif
         .p2c    (rst_n_PAD2CORE),
         .pad    (rst_n_PAD)
@@ -138,10 +134,10 @@ module chip_top #(
     for (genvar i=0; i<NUM_INPUT_PADS; i++) begin : inputs
         sg13cmos5l_IOPadIn input_pad (
             `ifdef USE_POWER_PINS
-            .iovdd  (IOVDD),
-            .iovss  (IOVSS),
-            .vdd    (VDD),
-            .vss    (VSS),
+            .iovdd  (IODVDD),
+            .iovss  (IODVSS),
+            .vdd    (DVDD),
+            .vss    (DVSS),
             `endif
             .p2c    (input_PAD2CORE[i]),
             .pad    (input_PAD[i])
@@ -153,10 +149,10 @@ module chip_top #(
     for (genvar i=0; i<NUM_OUTPUT_PADS; i++) begin : outputs
         sg13cmos5l_IOPadOut30mA output_pad (
             `ifdef USE_POWER_PINS
-            .iovdd  (IOVDD),
-            .iovss  (IOVSS),
-            .vdd    (VDD),
-            .vss    (VSS),
+            .iovdd  (IODVDD),
+            .iovss  (IODVSS),
+            .vdd    (DVDD),
+            .vss    (DVSS),
             `endif
             .c2p    (output_CORE2PAD[i]),
             .pad    (output_PAD[i])
@@ -168,10 +164,10 @@ module chip_top #(
     for (genvar i=0; i<NUM_BIDIR_PADS; i++) begin : bidirs
         sg13cmos5l_IOPadInOut30mA bidir_pad (
             `ifdef USE_POWER_PINS
-            .iovdd  (IOVDD),
-            .iovss  (IOVSS),
-            .vdd    (VDD),
-            .vss    (VSS),
+            .iovdd  (IODVDD),
+            .iovss  (IODVSS),
+            .vdd    (DVDD),
+            .vss    (DVSS),
             `endif
             .c2p    (bidir_CORE2PAD[i]),
             .c2p_en (bidir_CORE2PAD_OE[i]),
@@ -186,10 +182,10 @@ module chip_top #(
         (* keep *)
         sg13cmos5l_IOPadAnalog analog_pad (
             `ifdef USE_POWER_PINS
-            .iovdd  (IOVDD),
-            .iovss  (IOVSS),
-            .vdd    (VDD),
-            .vss    (VSS),
+            .iovdd  (IOAVDD),
+            .iovss  (IOAVSS),
+            .vdd    (AVDD),
+            .vss    (AVSS),
             `endif
             .padres (analog_PADRES[i]),
             .pad    (analog_PAD[i])
@@ -197,24 +193,57 @@ module chip_top #(
     end
     endgenerate
 
-    // Core design
+	localparam NUM_DIFF_PAIRS_PADS = 6;
+	wire [NUM_DIFF_PAIRS_PADS-1:0] diff_pair_pad;  
+	wire [NUM_DIFF_PAIRS_PADS-1:0] diff_pair_padres;  
+	assign diff_pair_pad = { clk_p_PAD, clk_n_PAD, tx_p_PAD, tx_n_PAD, rx_p_PAD, rx_n_PAD}; 
+	assign {clk_p, clk_n, tx_p, tx_n, rx_p, rx_n} = diff_pair_padres; 
+    generate
+    for (genvar i=0; i<NUM_DIFF_PAIRS_PADS; i++) begin : g_diff_analog_pads
+        (* keep *)
+        sg13cmos5l_IOPadAnalog analog_pad (
+            `ifdef USE_POWER_PINS
+            .iovdd  (IOAVDD),
+            .iovss  (IOAVSS),
+            .vdd    (AVDD),
+            .vss    (AVSS),
+            `endif
+            .padres (diff_pair_padres[i]),
+            .pad    (diff_pair_pad[i])
+        );
+    end
+    endgenerate
 
+    // Digital core design
     (* keep *) chip_core #(
         .NUM_INPUT_PADS  (NUM_INPUT_PADS),
         .NUM_OUTPUT_PADS (NUM_OUTPUT_PADS),
         .NUM_BIDIR_PADS  (NUM_BIDIR_PADS),
         .NUM_ANALOG_PADS (NUM_ANALOG_PADS)
     ) i_chip_core (
-        .clk        (clk_PAD2CORE),
+        .clk        (digital_clk),
         .rst_n      (rst_n_PAD2CORE),
         .input_in   (input_PAD2CORE),
         .output_out (output_CORE2PAD),
         .bidir_in   (bidir_PAD2CORE),
         .bidir_out  (bidir_CORE2PAD),
-        .bidir_oe   (bidir_CORE2PAD_OE),
-        .analog     (analog_PADRES)
+        .bidir_oe   (bidir_CORE2PAD_OE)
     );
 
-endmodule
+	// Dummy analog design
+	(* keep *) analog_dummy #(
+		.NUM_ANALOG_PADS(NUM_ANALOG_PADS)
+	) m_analog (
+		.clk_p_io(clk_p),
+		.clk_n_io(clk_n),
+		
+		.tx_p_io(tx_p_padres),
+		.tx_n_io(tx_n_padres),
+		.rx_p_io(rx_p_padres),
+		.rx_n_io(rx_n_padres),
 
-`default_nettype wire
+		.analog_io(analog_PADRES),
+		.digital_clk_o(digital_clk)
+	);
+
+endmodule
