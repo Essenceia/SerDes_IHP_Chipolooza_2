@@ -4,14 +4,6 @@
 `default_nettype none
 
 module chip_top #(
-    // Power/ground pads for core
-    parameter NUM_VDD_PADS = 1,
-    parameter NUM_VSS_PADS = 1,
-    
-    // Power/ground pads for I/O
-    parameter NUM_IOVDD_PADS = 1,
-    parameter NUM_IOVSS_PADS = 1,
-    
     // Signal pads
     parameter NUM_INPUT_PADS  = 10,
     parameter NUM_OUTPUT_PADS = 8,
@@ -19,12 +11,10 @@ module chip_top #(
     parameter NUM_ANALOG_PADS = 8
     )(
     `ifdef USE_POWER_PINS
-    inout wire IOVDD,
-    inout wire IOVSS,
-    inout wire DVDD,
-    inout wire DVSS,
-    inout wire AVDD,
-    inout wire AVSS,
+    inout wire IOAVDD, IODVDD,
+    inout wire IOAVSS, IODVSS,
+    inout wire AVDD, DVVV
+    inout wire AVSS, DVSS
     `endif
     inout  wire clk_PAD,
     inout  wire rst_n_PAD,
@@ -43,53 +33,82 @@ module chip_top #(
     wire [NUM_BIDIR_PADS-1 :0] bidir_CORE2PAD_OE;
     wire [NUM_ANALOG_PADS-1:0] analog_PADRES;
 
-    // Power/ground pad instances
-    generate
-    for (genvar i=0; i<NUM_IOVDD_PADS; i++) begin : iovdd_pads
-        (* keep *)
-        sg13cmos5l_IOPadIOVdd iovdd_pad  (
-            `ifdef USE_POWER_PINS
-            .iovdd  (IOVDD),
-            .iovss  (IOVSS),
-            .vdd    (VDD),
-            .vss    (VSS)
-            `endif
-        );
-    end
-    for (genvar i=0; i<NUM_IOVSS_PADS; i++) begin : iovss_pads
-        (* keep *)
-        sg13cmos5l_IOPadIOVss iovss_pad  (
-            `ifdef USE_POWER_PINS
-            .iovdd  (IOVDD),
-            .iovss  (IOVSS),
-            .vdd    (VDD),
-            .vss    (VSS)
-            `endif
-        );
-    end
-    for (genvar i=0; i<NUM_VDD_PADS; i++) begin : vdd_pads
-        (* keep *)
-        sg13cmos5l_IOPadVdd vdd_pad  (
-            `ifdef USE_POWER_PINS
-            .iovdd  (IOVDD),
-            .iovss  (IOVSS),
-            .vdd    (VDD),
-            .vss    (VSS)
-            `endif
-        );
-    end
-    for (genvar i=0; i<NUM_VSS_PADS; i++) begin : vss_pads
-        (* keep *)
-        sg13cmos5l_IOPadVss vss_pad  (
-            `ifdef USE_POWER_PINS
-            .iovdd  (IOVDD),
-            .iovss  (IOVSS),
-            .vdd    (VDD),
-            .vss    (VSS)
-            `endif
-        );
-    end
-    endgenerate
+    // Power/gnd
+    // Analog power domain
+    (* keep *)
+    sg13cmos5l_IOPadIOVdd ioavdd_pad  (
+        `ifdef USE_POWER_PINS
+        .iovdd  (IOAVDD),
+        .iovss  (IOAVSS),
+        .vdd    (AVDD),
+        .vss    (AVSS)
+        `endif
+    );
+    (* keep *)
+    sg13cmos5l_IOPadIOVss ioavss_pad  (
+        `ifdef USE_POWER_PINS
+        .iovdd  (IOAVDD),
+        .iovss  (IOAVSS),
+        .vdd    (AVDD),
+        .vss    (AVSS)
+        `endif
+    );
+    (* keep *)
+    sg13cmos5l_IOPadVdd avdd_pad  (
+        `ifdef USE_POWER_PINS
+        .iovdd  (IOAVDD),
+        .iovss  (IOAVSS),
+        .vdd    (AVDD),
+        .vss    (AVSS)
+        `endif
+    );
+    (* keep *)
+    sg13cmos5l_IOPadVss avss_pad  (
+        `ifdef USE_POWER_PINS
+        .iovdd  (IOAVDD),
+        .iovss  (IOAVSS),
+        .vdd    (AVDD),
+        .vss    (AVSS)
+        `endif
+    );
+	// Digital power domain
+    (* keep *)
+    sg13cmos5l_IOPadIOVdd iodvdd_pad  (
+        `ifdef USE_POWER_PINS
+        .iovdd  (IODVDD),
+        .iovss  (IODVSS),
+        .vdd    (DVDD),
+        .vss    (DVSS)
+        `endif
+    );
+    (* keep *)
+    sg13cmos5l_IOPadIOVss iodvss_pad  (
+        `ifdef USE_POWER_PINS
+        .iovdd  (IODVDD),
+        .iovss  (IODVSS),
+        .vdd    (DVDD),
+        .vss    (DVSS)
+        `endif
+    );
+    (* keep *)
+    sg13cmos5l_IOPadVdd dvdd_pad  (
+        `ifdef USE_POWER_PINS
+        .iovdd  (IODVDD),
+        .iovss  (IODVSS),
+        .vdd    (DVDD),
+        .vss    (DVSS)
+        `endif
+    );
+    (* keep *)
+    sg13cmos5l_IOPadVss dvss_pad  (
+        `ifdef USE_POWER_PINS
+        .iovdd  (IODVDD),
+        .iovss  (IODVSS),
+        .vdd    (DVDD),
+        .vss    (DVSS)
+        `endif
+    );
+
 
     // Signal IO pad instances
     sg13cmos5l_IOPadIn clk_pad (

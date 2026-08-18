@@ -105,9 +105,11 @@ FALLBACK_SDC: dir::chip_top.sdc
 
 # Power / ground nets
 VDD_NETS:
-- VDD
+- AVDD
+- DVDD
 GND_NETS:
-- VSS
+- AVSS
+- DVSS
 
 # Clock
 CLOCK_PORT: clk_PAD
