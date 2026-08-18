@@ -119,6 +119,7 @@ module chip_top #(
 
 
     // Signal IO pad instances
+    (* keep *)
     sg13cmos5l_IOPadIn rst_n_pad (
         `ifdef USE_POWER_PINS
         .iovdd  (IODVDD),
@@ -132,6 +133,7 @@ module chip_top #(
 
     generate
     for (genvar i=0; i<NUM_INPUT_PADS; i++) begin : inputs
+    	(* keep *)
         sg13cmos5l_IOPadIn input_pad (
             `ifdef USE_POWER_PINS
             .iovdd  (IODVDD),
@@ -147,6 +149,7 @@ module chip_top #(
 
     generate
     for (genvar i=0; i<NUM_OUTPUT_PADS; i++) begin : outputs
+    	(* keep *)
         sg13cmos5l_IOPadOut30mA output_pad (
             `ifdef USE_POWER_PINS
             .iovdd  (IODVDD),
@@ -162,6 +165,7 @@ module chip_top #(
 
     generate
     for (genvar i=0; i<NUM_BIDIR_PADS; i++) begin : bidirs
+    	(* keep *)
         sg13cmos5l_IOPadInOut30mA bidir_pad (
             `ifdef USE_POWER_PINS
             .iovdd  (IODVDD),
