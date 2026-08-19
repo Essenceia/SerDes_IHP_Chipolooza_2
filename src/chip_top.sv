@@ -4,6 +4,7 @@
 `default_nettype none
 
 module chip_top #(
+	parameter NUM_VSSA = 4;
     // Signal pads
     parameter NUM_INPUT_PADS  = 2,
     parameter NUM_OUTPUT_PADS = 1,
