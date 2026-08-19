@@ -64,11 +64,11 @@ PAD_EAST: [
     "analogs\\[1\\].analog_pad",
     "analogs\\[2\\].analog_pad",
     "iovdda\\[0\\].iovdda_pad",
-    "iovssa\\[0\\].iovdda_pad",
+    "iovssa\\[0\\].iovssa_pad",
 
     "vssa\\[2\\].vssa_pad",
     rx_p_pad, 
-    rx_n_pad
+    rx_n_pad,
     "vssa\\[3\\].vssa_pad"
 ]
 # TODO: replace IO analog power pads with IO digital power
@@ -78,7 +78,7 @@ PAD_NORTH: [
     rst_n_pad,
 
     "iovdda\\[1\\].iovdda_pad",
-    "iovssa\\[1\\].iovdda_pad",
+    "iovssa\\[1\\].iovssa_pad",
 
     "bidirs\\[0\\].bidir_pad", 
     "bidirs\\[1\\].bidir_pad", 
@@ -141,11 +141,11 @@ IGNORE_DISCONNECTED_MODULES:
 # Power / ground nets
 # TODO: add back digital power
 VDD_NETS:
-- AVDD
-#- DVDD
+- VDDA
+#- VDDD
 GND_NETS:
-- AVSS
-#- DVSS
+- VSSA
+#- VSSD
 #
 PDN_CFG: dir::pdn_cfg.tcl
 

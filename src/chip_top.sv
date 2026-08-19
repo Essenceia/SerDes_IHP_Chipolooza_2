@@ -5,10 +5,10 @@
 
 // TODO: seperate out digital power again once we have the splitter cells
 module chip_top #(
-	parameter NUM_VSSA = 5;
-	parameter NUM_VDDA = 2;
-	parameter NUM_IOVSSA = 2;
-	parameter NUM_IOVDDA = NUM_IOVDDA;
+	parameter NUM_VSSA   = 5,
+	parameter NUM_VDDA   = 2,
+	parameter NUM_IOVSSA = 2,
+	parameter NUM_IOVDDA = NUM_IOVSSA,
 	// Signal pads
 	parameter NUM_INPUT_PADS  = 2,
 	parameter NUM_OUTPUT_PADS = 1,
@@ -17,11 +17,11 @@ module chip_top #(
 	)(
 	`ifdef USE_POWER_PINS
 	//inout wire IOAVDD, IODVDD,
-	inout wire [NUM_IOVDDA-1:0] IOVDDA,
-	inout wire [NUM_IOVSSA-1:0] IOVSSA,
+	inout wire IOVDDA,
+	inout wire IOVSSA,
 	//inout wire VDDD, VSSD,
-	inout wire [NUM_VDDA-1:0]  VDDA,
-	inout wire [NUM_VSSA-1:0]  VSSA,
+	inout wire  VDDA,
+	inout wire  VSSA,
 	`endif
 	inout  wire clk_p_PAD,
 	inout  wire clk_n_PAD,
@@ -50,22 +50,21 @@ module chip_top #(
 
 	// Power/gnd
 	// IO ring power
-	genvar i; 
 	generate 
-	for (i = 0; i  < NUM_IOVDDA; i = i+1) begin: iovdda 
+	for (genvar i = 0; i  < NUM_IOVDDA; i = i+1) begin: iovdda 
    		(* keep *)
-   		sg13cmos5l_IOPadIOVdd ioavdd_pad(
+   		sg13cmos5l_IOPadIOVdd iovdda_pad(
    	    `ifdef USE_POWER_PINS
    		.iovdd  (IOVDDA),
-   		.iovss  (IOAVSS),
+   		.iovss  (IOVSSA),
    		.vdd    (VDDA),
    	   	.vss    (VSSA)
    	   	`endif
    		 );
 	end
-	for (i = 0; i  < NUM_IOVSSA; i = i+1) begin: iovssa 
+	for (genvar i = 0; i  < NUM_IOVSSA; i = i+1) begin: iovssa 
 	(* keep *)
-	sg13cmos5l_IOPadIOVss ioavss_pad(
+	sg13cmos5l_IOPadIOVss iovssa_pad(
 	    `ifdef USE_POWER_PINS
 	    .iovdd  (IOVDDA),
 	    .iovss  (IOVSSA),
@@ -94,9 +93,9 @@ module chip_top #(
 	    `endif
 	);*/
 	// Analog power domain
-	for (i = 0; i  < NUM_VDDA; i = i+1) begin: vdda 
+	for (genvar i = 0; i  < NUM_VDDA; i = i+1) begin: vdda 
 	(* keep *)
-	sg13cmos5l_IOPadVdd avdd_pad(
+	sg13cmos5l_IOPadVdd vdda_pad(
 	    `ifdef USE_POWER_PINS
 	    .iovdd  (IOVDDA),
 	    .iovss  (IOVSSA),
@@ -105,9 +104,9 @@ module chip_top #(
 	    `endif
 	);
 	end
-	for (i = 0; i  < NUM_VSSA; i = i+1) begin: vssa 
+	for (genvar i = 0; i  < NUM_VSSA; i = i+1) begin: vssa 
 	(* keep *)
-	sg13cmos5l_IOPadVss avss_pad(
+	sg13cmos5l_IOPadVss vssa_pad(
 	    `ifdef USE_POWER_PINS
 	    .iovdd  (IOVDDA),
 	    .iovss  (IOVSSA),
