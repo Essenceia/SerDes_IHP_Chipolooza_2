@@ -67,8 +67,8 @@ PAD_EAST: [
     "iovssa\\[0\\].iovssa_pad",
 
     "vssa\\[2\\].vssa_pad",
-    rx_p_pad, 
     rx_n_pad,
+    rx_p_pad, 
     "vssa\\[3\\].vssa_pad"
 ]
 # TODO: replace IO analog power pads with IO digital power
