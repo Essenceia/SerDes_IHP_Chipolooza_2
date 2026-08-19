@@ -50,51 +50,48 @@ PRIMARY_GDSII_STREAMOUT_TOOL: klayout
 # Signal, AVDD, txp, txn, VSS, clkp, clkn, vss
 PAD_SOUTH: [
     "analogs\\[0\\].analog_pad",
-    vdda_pad,
+
+    "vdda\\[0\\].vdda_pad",
     "tx_p_pad",   
     "tx_n_pad", 
-
     "vssa\\[0\\].vssa_pad",
-    
     clk_p_pad,
     clk_n_pad,
- 
     "vssa\\[1\\].vssa_pad"
 ]
 
 PAD_EAST: [
     "analogs\\[1\\].analog_pad",
     "analogs\\[2\\].analog_pad",
+    "iovdda\\[0\\].iovdda_pad",
+    "iovssa\\[0\\].iovdda_pad",
 
-    iovdda_pad,
-    iovssa_pad,
-
-    "vssa\\[2\\].vssa_pad"
+    "vssa\\[2\\].vssa_pad",
     rx_p_pad, 
     rx_n_pad
     "vssa\\[3\\].vssa_pad"
 ]
-
+# TODO: replace IO analog power pads with IO digital power
 PAD_NORTH: [
     "bidirs\\[6\\].bidir_pad", 
     "bidirs\\[7\\].bidir_pad", 
     rst_n_pad,
 
-    iodvdd_pad,
-    iodvss_pad,
+    "iovdda\\[1\\].iovdda_pad",
+    "iovssa\\[1\\].iovdda_pad",
 
     "bidirs\\[0\\].bidir_pad", 
     "bidirs\\[1\\].bidir_pad", 
     "bidirs\\[2\\].bidir_pad"
 ]
-
+# TODO: replace analog power pads with digital power
 PAD_WEST: [
     "inputs\\[0\\].input_pad",
     "inputs\\[1\\].input_pad",
     "outputs\\[0\\].output_pad", 
 
-    vddd_pad,
-    vssd_pad,
+    "vdda\\[1\\].vdda_pad",
+    "vssa\\[4\\].vssa_pad",
     
     "bidirs\\[3\\].bidir_pad", 
     "bidirs\\[4\\].bidir_pad", 
@@ -142,12 +139,14 @@ IGNORE_DISCONNECTED_MODULES:
 - bondpad_70x70_5L
 
 # Power / ground nets
+# TODO: add back digital power
 VDD_NETS:
 - AVDD
-- DVDD
+#- DVDD
 GND_NETS:
 - AVSS
-- DVSS
+#- DVSS
+#
 PDN_CFG: dir::pdn_cfg.tcl
 
 # Maximum metal width without slotting: 30um
